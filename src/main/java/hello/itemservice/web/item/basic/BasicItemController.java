@@ -49,6 +49,7 @@ public class BasicItemController {
         item.setPrice(price);
         item.setQuantity(quantity);
 
+
         itemRepository.save(item);
 
         model.addAttribute("item",item);
