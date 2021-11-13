@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -24,6 +26,15 @@ public class BasicItemController {
         return "basic/items";
     }
 
+    @ModelAttribute("regions")
+    public Map<String, String> regions() {
+        Map<String, String> regions = new LinkedHashMap<>();
+        regions.put("SEOUL", "서울");
+        regions.put("BUSAN", "부산");
+        regions.put("JEJU", "제주");
+        return regions;
+    }
+
     @GetMapping("/{itemId}")
     public String item(@PathVariable long itemId, Model model) {
         Item item = itemRepository.findById(itemId);
@@ -34,7 +45,8 @@ public class BasicItemController {
     // 향후 이렇게 사용할수있으면 이렇게 사용하자
     // 같은 url인데 method로 기능을 구분 해주는 방법
     @GetMapping("/add")
-    public String addForm() {
+    public String addForm(Model model) {
+        model.addAttribute("item",new Item());
         return "basic/addForm";
     }
 
@@ -91,6 +103,7 @@ public class BasicItemController {
     //때문에 이런식으로 파라미터를 넘겨주면 메시지를 보내줄수 있다
     @PostMapping("/add")
     public String addItemV6(Item item, RedirectAttributes redirectAttributes){
+
         log.info("item.open={}",item.getOpen());
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId",savedItem.getId());
