@@ -1,6 +1,7 @@
 package hello.itemservice.web.item.basic;
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
+import hello.itemservice.domain.item.ItemType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,12 @@ public class BasicItemController {
         regions.put("JEJU", "제주");
         return regions;
     }
+
+    @ModelAttribute("itemTypes")
+    public ItemType[] itemTypes() {
+        return ItemType.values(); //인라인 단축키 ctrl + alt + n
+    }
+
 
     @GetMapping("/{itemId}")
     public String item(@PathVariable long itemId, Model model) {
@@ -113,6 +120,7 @@ public class BasicItemController {
 
     @GetMapping("/{itemId}/edit")
     public String editForm(@PathVariable long itemId, Model model) {
+
         Item item = itemRepository.findById(itemId);
         model.addAttribute("item",item);
         return "basic/editForm";
@@ -120,12 +128,11 @@ public class BasicItemController {
 
     @PostMapping("/{itemId}/edit")
     public String editForm(@PathVariable long itemId, @ModelAttribute Item item) {
+        log.info("item.itemType={}",item.getItemType());
         itemRepository.update(itemId,item);
         return "redirect:/basic/items/{itemId}"; //스프링에서 redirect 하는 방법
 
     }
-
-
 
     /**
      * 테스트용 데이터 추가
